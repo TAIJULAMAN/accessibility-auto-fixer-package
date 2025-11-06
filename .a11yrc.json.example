@@ -1,0 +1,51 @@
+{
+  "fix": true,
+  "report": true,
+  "reportPath": "a11y-report.html",
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/*.test.*",
+    "**/*.spec.*"
+  ],
+  "rules": {
+    "missing-alt-text": {
+      "enabled": true,
+      "severity": "error"
+    },
+    "missing-aria-label": {
+      "enabled": true,
+      "severity": "warning"
+    },
+    "missing-form-label": {
+      "enabled": true,
+      "severity": "error"
+    },
+    "missing-button-type": {
+      "enabled": true,
+      "severity": "warning"
+    },
+    "duplicate-id": {
+      "enabled": true,
+      "severity": "error"
+    },
+    "missing-lang-attribute": {
+      "enabled": true,
+      "severity": "error"
+    },
+    "missing-heading-hierarchy": {
+      "enabled": true,
+      "severity": "warning"
+    },
+    "missing-landmark": {
+      "enabled": true,
+      "severity": "info"
+    },
+    "invalid-role": {
+      "enabled": true,
+      "severity": "error"
+    }
+  }
+}
+

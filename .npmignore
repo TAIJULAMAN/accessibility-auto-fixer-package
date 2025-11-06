@@ -1,0 +1,14 @@
+node_modules/
+src/
+examples/
+*.test.ts
+*.spec.ts
+tsconfig.json
+.gitignore
+.a11yrc.json.example
+*.log
+.DS_Store
+.env
+coverage/
+*.tsbuildinfo
+
