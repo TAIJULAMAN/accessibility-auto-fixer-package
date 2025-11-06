@@ -1,6 +1,4 @@
-# 🔧 Accessibility Auto-Fixer
-
-> Automatically detect and fix accessibility issues in your HTML, JSX, and TSX code
+#  Accessibility Auto-Fixer
 
 [![npm version](https://img.shields.io/npm/v/accessibility-auto-fixer.svg)](https://www.npmjs.com/package/accessibility-auto-fixer)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -22,18 +20,6 @@
 
 ```bash
 npm install -g accessibility-auto-fixer
-```
-
-Or use it locally in your project:
-
-```bash
-npm install --save-dev accessibility-auto-fixer
-```
-
-For React projects, you also need React and React DOM (peer dependencies):
-
-```bash
-npm install react react-dom
 ```
 
 ## 🚀 Quick Start
