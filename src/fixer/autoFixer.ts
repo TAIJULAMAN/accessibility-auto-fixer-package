@@ -1,10 +1,18 @@
-import { AccessibilityIssue, Fix } from '../types';
+import { AccessibilityIssue, Fix, Config } from '../types';
 import { HTMLScanner } from '../scanner/htmlScanner';
 import { JSXScanner } from '../scanner/jsxScanner';
 import { isHTMLFile, isJSXFile } from '../utils/fileReader';
+import { ASTTransformer } from './astTransformer';
 
 export class AutoFixer {
   private fixes: Fix[] = [];
+  private astTransformer: ASTTransformer;
+  private config: Config;
+
+  constructor(config: Config = {}) {
+    this.astTransformer = new ASTTransformer();
+    this.config = config;
+  }
 
   async fixHTML(html: string, issues: AccessibilityIssue[]): Promise<string> {
     const scanner = new HTMLScanner(html);
@@ -23,6 +31,25 @@ export class AutoFixer {
   }
 
   async fixJSX(code: string, issues: AccessibilityIssue[]): Promise<string> {
+    // Use AST transformer for more reliable fixes
+    try {
+      const fixableIssues = issues.filter((issue) => issue.fix);
+      if (fixableIssues.length === 0) {
+        return code;
+      }
+
+      return await this.astTransformer.transformJSX(code, fixableIssues);
+    } catch (error) {
+      console.error('AST transformation failed, falling back to string manipulation:', error);
+      // Fallback to old method if AST transformation fails
+      return this.fixJSXLegacy(code, issues);
+    }
+  }
+
+  /**
+   * Legacy JSX fix method (fallback)
+   */
+  private async fixJSXLegacy(code: string, issues: AccessibilityIssue[]): Promise<string> {
     let fixedCode = code;
     const lines = code.split('\n');
 
@@ -48,6 +75,8 @@ export class AutoFixer {
   }
 
   private generateFixForIssue(issue: AccessibilityIssue): Fix | undefined {
+    const autoFixConfig = this.config.autoFix || {};
+
     switch (issue.type) {
       case 'missing-alt-text':
         return {
@@ -83,11 +112,33 @@ export class AutoFixer {
         };
 
       case 'missing-aria-label':
-        // Can't auto-fix without context
+        // Auto-fix if enabled in config
+        if (autoFixConfig.generateAriaLabels !== false) {
+          return {
+            type: 'add-attribute',
+            description: 'Add aria-label attribute',
+            code: 'aria-label="Interactive element"',
+            position: {
+              line: issue.line,
+              column: issue.column,
+            },
+          };
+        }
         return undefined;
 
       case 'missing-form-label':
-        // Requires creating label element - complex fix
+        // Auto-fix if enabled in config
+        if (autoFixConfig.wrapInputsWithLabels !== false) {
+          return {
+            type: 'add-attribute',
+            description: 'Add aria-label to input',
+            code: 'aria-label="Input field"',
+            position: {
+              line: issue.line,
+              column: issue.column,
+            },
+          };
+        }
         return undefined;
 
       case 'duplicate-id':
