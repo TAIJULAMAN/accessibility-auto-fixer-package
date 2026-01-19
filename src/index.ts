@@ -14,53 +14,107 @@ export class AccessibilityAutoFixer {
       report: false,
       ...config,
     };
-    this.fixer = new AutoFixer();
+    this.fixer = new AutoFixer(this.config);
   }
 
   async scanFiles(patterns: string[]): Promise<ScanResult[]> {
     const files = await findFiles(patterns, this.config.ignore);
     const results: ScanResult[] = [];
 
-    for (const file of files) {
-      try {
-        const content = await readFile(file);
-        const issues = await this.scanFile(file, content);
+    // Initialize cache if enabled
+    const performanceConfig = this.config.performance || {};
+    const cacheEnabled = performanceConfig.cache !== false;
+    const parallel = performanceConfig.parallel !== false;
+    const maxConcurrency = performanceConfig.maxConcurrency || 10;
 
-        // Generate fixes
-        const issuesWithFixes = this.fixer.generateFixes(issues);
+    let cache: any = null;
+    if (cacheEnabled) {
+      const { FileCache } = await import('./utils/cache');
+      cache = new FileCache(performanceConfig.cacheDir, true);
+    }
 
-        // Apply fixes if enabled
-        let fixedCount = 0;
-        let fixedContent = content;
+    // Process files
+    if (parallel && files.length > 1) {
+      // Parallel processing with concurrency limit
+      const pLimit = (await import('p-limit')).default;
+      const limit = pLimit(maxConcurrency);
 
-        if (this.config.fix) {
-          const fixableIssues = issuesWithFixes.filter((i) => i.fix);
-          if (fixableIssues.length > 0) {
-            if (isHTMLFile(file)) {
-              fixedContent = await this.fixer.fixHTML(content, fixableIssues);
-            } else if (isJSXFile(file)) {
-              fixedContent = await this.fixer.fixJSX(content, fixableIssues);
-            }
+      const promises = files.map((file) =>
+        limit(() => this.processFile(file, cache))
+      );
 
-            if (fixedContent !== content) {
-              await writeFile(file, fixedContent);
-              fixedCount = fixableIssues.length;
-            }
-          }
+      const fileResults = await Promise.all(promises);
+      results.push(...fileResults.filter((r): r is ScanResult => r !== null));
+    } else {
+      // Sequential processing
+      for (const file of files) {
+        const result = await this.processFile(file, cache);
+        if (result) {
+          results.push(result);
         }
-
-        results.push({
-          file,
-          issues: issuesWithFixes,
-          fixed: fixedCount,
-          total: issues.length,
-        });
-      } catch (error) {
-        console.error(`Error processing ${file}:`, error);
       }
     }
 
     return results;
+  }
+
+  /**
+   * Process a single file with caching support
+   */
+  private async processFile(file: string, cache: any): Promise<ScanResult | null> {
+    try {
+      const content = await readFile(file);
+
+      // Check cache first
+      if (cache) {
+        const cached = cache.get(file, content);
+        if (cached) {
+          return cached;
+        }
+      }
+
+      const issues = await this.scanFile(file, content);
+
+      // Generate fixes
+      const issuesWithFixes = this.fixer.generateFixes(issues);
+
+      // Apply fixes if enabled
+      let fixedCount = 0;
+      let fixedContent = content;
+
+      if (this.config.fix) {
+        const fixableIssues = issuesWithFixes.filter((i) => i.fix);
+        if (fixableIssues.length > 0) {
+          if (isHTMLFile(file)) {
+            fixedContent = await this.fixer.fixHTML(content, fixableIssues);
+          } else if (isJSXFile(file)) {
+            fixedContent = await this.fixer.fixJSX(content, fixableIssues);
+          }
+
+          if (fixedContent !== content) {
+            await writeFile(file, fixedContent);
+            fixedCount = fixableIssues.length;
+          }
+        }
+      }
+
+      const result: ScanResult = {
+        file,
+        issues: issuesWithFixes,
+        fixed: fixedCount,
+        total: issues.length,
+      };
+
+      // Store in cache
+      if (cache && !this.config.fix) {
+        cache.set(file, content, result);
+      }
+
+      return result;
+    } catch (error) {
+      console.error(`Error processing ${file}:`, error);
+      return null;
+    }
   }
 
   private async scanFile(filePath: string, content: string): Promise<AccessibilityIssue[]> {

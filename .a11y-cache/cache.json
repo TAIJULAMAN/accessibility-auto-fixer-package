@@ -1,0 +1,116 @@
+{
+  "C:\\Projects\\accessibility-auto-fixer-package\\accessibility-auto-fixer-package\\examples\\test.jsx": {
+    "hash": "5fa2bfd6111dbb95e4bd52d7d933a131",
+    "timestamp": 1768796935977,
+    "result": {
+      "file": "C:\\Projects\\accessibility-auto-fixer-package\\accessibility-auto-fixer-package\\examples\\test.jsx",
+      "issues": [
+        {
+          "type": "invalid-role",
+          "severity": "error",
+          "message": "Invalid ARIA role: \"invalidrole\"",
+          "line": 15,
+          "column": 7,
+          "code": "      <div role=\"invalidrole\">\r"
+        }
+      ],
+      "fixed": 0,
+      "total": 1
+    }
+  },
+  "C:\\Projects\\accessibility-auto-fixer-package\\accessibility-auto-fixer-package\\examples\\test.html": {
+    "hash": "111367669989067e0a0fe4c5b5350742",
+    "timestamp": 1768796936073,
+    "result": {
+      "file": "C:\\Projects\\accessibility-auto-fixer-package\\accessibility-auto-fixer-package\\examples\\test.html",
+      "issues": [
+        {
+          "type": "missing-form-label",
+          "severity": "error",
+          "message": "Form input missing associated label",
+          "line": 1,
+          "column": 1,
+          "code": "<input type=\"text\" id=\"username\">",
+          "fix": {
+            "type": "add-attribute",
+            "description": "Add aria-label to input",
+            "code": "aria-label=\"Input field\"",
+            "position": {
+              "line": 1,
+              "column": 1
+            }
+          }
+        },
+        {
+          "type": "missing-form-label",
+          "severity": "error",
+          "message": "Form input missing associated label",
+          "line": 1,
+          "column": 1,
+          "code": "<input type=\"email\">",
+          "fix": {
+            "type": "add-attribute",
+            "description": "Add aria-label to input",
+            "code": "aria-label=\"Input field\"",
+            "position": {
+              "line": 1,
+              "column": 1
+            }
+          }
+        },
+        {
+          "type": "duplicate-id",
+          "severity": "error",
+          "message": "Duplicate ID \"content\" found",
+          "line": 17,
+          "column": 23,
+          "code": "<div id=\"content\">"
+        },
+        {
+          "type": "duplicate-id",
+          "severity": "error",
+          "message": "Duplicate ID \"content\" found",
+          "line": 18,
+          "column": 23,
+          "code": "<div id=\"content\">"
+        },
+        {
+          "type": "missing-heading-hierarchy",
+          "severity": "warning",
+          "message": "Heading level 3 follows level 1 (should be 2)",
+          "line": 6,
+          "column": 9,
+          "code": "<h3>"
+        },
+        {
+          "type": "missing-landmark",
+          "severity": "info",
+          "message": "Document missing main landmark",
+          "line": 1,
+          "column": 1,
+          "code": "<body>"
+        },
+        {
+          "type": "invalid-role",
+          "severity": "error",
+          "message": "Invalid ARIA role: \"invalidrole\"",
+          "line": 21,
+          "column": 29,
+          "code": "<div role=\"invalidrole\">"
+        }
+      ],
+      "fixed": 0,
+      "total": 7
+    }
+  },
+  "C:\\Projects\\accessibility-auto-fixer-package\\accessibility-auto-fixer-package\\examples\\ReactExample.tsx": {
+    "hash": "e5f873c7ceac9915f6eeb40a886a2f95",
+    "timestamp": 1768796936090,
+    "result": {
+      "file": "C:\\Projects\\accessibility-auto-fixer-package\\accessibility-auto-fixer-package\\examples\\ReactExample.tsx",
+      "issues": [],
+      "fixed": 0,
+      "total": 0
+    }
+  }
+}

@@ -6,8 +6,8 @@ import {
   useAccessibilityRef,
   useAccessibility,
   AccessibleButton,
-  AccessibleImage,
-} from '../src/react';
+  AccessibleImage } from
+'../src/react';
 
 // Example 1: Using the AccessibilityChecker component
 export function ExampleWithChecker() {
@@ -15,12 +15,12 @@ export function ExampleWithChecker() {
     <AccessibilityChecker enabled={true} showIssues={true}>
       <div>
         <h1>My App</h1>
-        <img src="/logo.png" /> {/* Will show missing alt text */}
-        <button onClick={() => alert('clicked')}>Click me</button> {/* Will show missing type */}
-        <input type="text" /> {/* Will show missing label */}
+        <img src="/logo.png" alt="" /> {/* Will show missing alt text */}
+        <button onClick={() => alert('clicked')} type="button">Click me</button> {/* Will show missing type */}
+        <input type="text" aria-label="Input field" /> {/* Will show missing label */}
       </div>
-    </AccessibilityChecker>
-  );
+    </AccessibilityChecker>);
+
 }
 
 // Example 2: Using the useAccessibilityRef hook
@@ -29,25 +29,25 @@ export function ExampleWithHook() {
     enabled: true,
     onIssueFound: (issues) => {
       console.log('Found accessibility issues:', issues);
-    },
+    }
   });
 
   return (
     <div>
       <div ref={ref}>
         <h2>Content that will be checked</h2>
-        <img src="/banner.jpg" />
-        <button>Submit</button>
+        <img src="/banner.jpg" alt="" />
+        <button type="button">Submit</button>
       </div>
       
-      {issues.length > 0 && (
-        <div style={{ marginTop: '20px', padding: '10px', background: '#fee' }}>
+      {issues.length > 0 &&
+      <div style={{ marginTop: '20px', padding: '10px', background: '#fee' }}>
           <h3>Accessibility Issues Found: {issues.length}</h3>
-          <button onClick={checkAccessibility}>Re-check</button>
+          <button onClick={checkAccessibility} type="button">Re-check</button>
         </div>
-      )}
-    </div>
-  );
+      }
+    </div>);
+
 }
 
 // Example 3: Using AccessibleButton component
@@ -58,20 +58,20 @@ export function ExampleWithAccessibleComponents() {
         Close
       </AccessibleButton>
       
-      <AccessibleImage 
-        src="/logo.png" 
+      <AccessibleImage
+        src="/logo.png"
         alt="Company logo"
         width={200}
-        height={100}
-      />
+        height={100} />
       
-      <AccessibleImage 
-        src="/pattern.png" 
+      
+      <AccessibleImage
+        src="/pattern.png"
         alt=""
-        decorative={true}
-      />
-    </div>
-  );
+        decorative={true} />
+      
+    </div>);
+
 }
 
 // Example 4: Using AccessibilityProvider
@@ -79,20 +79,20 @@ export function ExampleWithProvider() {
   return (
     <AccessibilityProvider>
       <AppContent />
-    </AccessibilityProvider>
-  );
+    </AccessibilityProvider>);
+
 }
 
 function AppContent() {
   const { issues, addIssue, clearIssues } = useAccessibilityContext();
-  
+
   return (
     <div>
       <h1>My Accessible App</h1>
       <p>Total issues: {issues.length}</p>
-      <button onClick={clearIssues}>Clear Issues</button>
-    </div>
-  );
+      <button onClick={clearIssues} type="button">Clear Issues</button>
+    </div>);
+
 }
 
 // Example 5: Using useAccessibility hook directly
@@ -101,21 +101,20 @@ export function ExampleWithDirectHook() {
   const { issues, checkAccessibility } = useAccessibility(divRef, {
     enabled: process.env.NODE_ENV === 'development',
     checkOnMount: true,
-    checkInterval: 5000, // Check every 5 seconds
+    checkInterval: 5000 // Check every 5 seconds
   });
 
   return (
     <div>
       <div ref={divRef}>
         <h1>Content</h1>
-        <img src="/image.jpg" />
+        <img src="/image.jpg" alt="" />
       </div>
       
       <div>
         <h2>Issues: {issues.length}</h2>
-        <button onClick={checkAccessibility}>Check Now</button>
+        <button onClick={checkAccessibility} type="button">Check Now</button>
       </div>
-    </div>
-  );
-}
+    </div>);
 
+}

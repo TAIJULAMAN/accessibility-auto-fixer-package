@@ -54,5 +54,16 @@ export interface Config {
       severity?: 'error' | 'warning' | 'info';
     };
   };
+  performance?: {
+    cache?: boolean;
+    cacheDir?: string;
+    parallel?: boolean;
+    maxConcurrency?: number;
+  };
+  autoFix?: {
+    generateAriaLabels?: boolean;
+    fixHeadingHierarchy?: boolean;
+    wrapInputsWithLabels?: boolean;
+  };
 }
 
