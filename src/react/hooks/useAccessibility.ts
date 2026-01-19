@@ -6,6 +6,7 @@ export interface UseAccessibilityOptions {
   onIssueFound?: (issues: AccessibilityIssue[]) => void;
   checkOnMount?: boolean;
   checkInterval?: number;
+  debounceMs?: number; // Debounce delay in milliseconds
 }
 
 export interface UseAccessibilityReturn {
@@ -36,12 +37,14 @@ export function useAccessibility<T extends HTMLElement = HTMLDivElement>(
     onIssueFound,
     checkOnMount = true,
     checkInterval,
+    debounceMs = 300, // Default 300ms debounce
   } = options;
 
   const [issues, setIssues] = useState<AccessibilityIssue[]>([]);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  const checkAccessibility = () => {
+  const performCheck = () => {
     if (!enabled || !ref.current) {
       return;
     }
@@ -68,7 +71,7 @@ export function useAccessibility<T extends HTMLElement = HTMLDivElement>(
     const interactiveElements = element.querySelectorAll(
       'button:not([aria-label]):not([aria-labelledby]), [role="button"]:not([aria-label]):not([aria-labelledby])'
     );
-    
+
     interactiveElements.forEach((el) => {
       const text = el.textContent?.trim() || '';
       if (!text && !el.hasAttribute('aria-label') && !el.hasAttribute('aria-labelledby')) {
@@ -89,7 +92,7 @@ export function useAccessibility<T extends HTMLElement = HTMLDivElement>(
       const id = input.getAttribute('id');
       const hasLabel = id && element.querySelector(`label[for="${id}"]`);
       const hasAriaLabel = input.hasAttribute('aria-label') || input.hasAttribute('aria-labelledby');
-      
+
       if (!hasLabel && !hasAriaLabel && input.getAttribute('type') !== 'hidden') {
         detectedIssues.push({
           type: 'missing-form-label',
@@ -120,7 +123,7 @@ export function useAccessibility<T extends HTMLElement = HTMLDivElement>(
     // Check for duplicate IDs
     const idMap = new Map<string, Element[]>();
     const elementsWithIds = element.querySelectorAll('[id]');
-    
+
     elementsWithIds.forEach((el) => {
       const id = el.getAttribute('id');
       if (id) {
@@ -147,10 +150,21 @@ export function useAccessibility<T extends HTMLElement = HTMLDivElement>(
     });
 
     setIssues(detectedIssues);
-    
+
     if (detectedIssues.length > 0 && onIssueFound) {
       onIssueFound(detectedIssues);
     }
+  };
+
+  // Debounced check function
+  const checkAccessibility = () => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      performCheck();
+    }, debounceMs);
   };
 
   const clearIssues = () => {
@@ -164,16 +178,19 @@ export function useAccessibility<T extends HTMLElement = HTMLDivElement>(
 
     if (checkOnMount) {
       // Small delay to ensure DOM is ready
-      setTimeout(checkAccessibility, 100);
+      setTimeout(performCheck, 100);
     }
 
     if (checkInterval && checkInterval > 0) {
-      intervalRef.current = setInterval(checkAccessibility, checkInterval);
+      intervalRef.current = setInterval(performCheck, checkInterval);
     }
 
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
+      }
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
       }
     };
   }, [enabled, checkOnMount, checkInterval]);
