@@ -1,6 +1,6 @@
 {
     "name": "accessibility-auto-fixer",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Automatically detect and fix accessibility issues in your HTML, JSX, and TSX code",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -36,13 +36,16 @@
     "author": "Md Shah Aman Patwary <mdshahamanpatwary@gmail.com>",
     "license": "MIT",
     "dependencies": {
+        "@babel/generator": "^7.28.6",
         "@babel/parser": "^7.23.0",
         "@babel/traverse": "^7.23.0",
         "@babel/types": "^7.23.0",
         "chalk": "^4.1.2",
         "commander": "^11.1.0",
+        "fast-glob": "^3.3.3",
         "glob": "^10.3.10",
-        "jsdom": "^23.0.0"
+        "jsdom": "^23.0.0",
+        "p-limit": "^7.2.0"
     },
     "peerDependencies": {
         "react": ">=16.8.0",
