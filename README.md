@@ -5,6 +5,8 @@
 
 **Accessibility Auto-Fixer** is a powerful tool that scans your code for accessibility issues and automatically fixes common problems, helping you build more inclusive web applications.
 
+> **📖 [Complete Usage Guide](./USAGE_GUIDE.md)** - Detailed documentation with examples, configuration, and best practices
+
 ## ✨ Features
 
 - 🔍 **Comprehensive Scanning** - Detects 14+ types of accessibility issues
@@ -14,7 +16,15 @@
 - ⚛️ **React & TypeScript Support** - React hooks, components, and TypeScript types included
 - 🎨 **Runtime Checking** - Check accessibility issues at runtime in your React apps
 - ⚙️ **Configurable** - Customize rules, severity levels, and ignore patterns
-- 🚀 **Lightweight** - Minimal dependencies
+- 🚀 **High Performance** - Parallel processing and file caching for 3-5x faster scans
+
+## 🆕 What's New (v1.0.2)
+
+- ✨ **AST-Based Auto-Fix** - More reliable JSX/TSX fixes using Abstract Syntax Tree transformations
+- ⚡ **Parallel Processing** - 3-5x faster scans with configurable concurrency
+- 💾 **File Caching** - 95%+ faster on unchanged files with smart cache invalidation
+- 🎯 **Expanded Auto-Fix** - Now fixes ARIA labels and form labels automatically
+- ⚛️ **Optimized React Hooks** - Debouncing prevents excessive accessibility checks
 
 ## 📦 Installation
 
@@ -87,6 +97,8 @@ results.forEach((result) => {
 ## ⚛️ React & TypeScript Usage
 
 This package includes React hooks and components for runtime accessibility checking in your React applications.
+
+> **📖 See [USAGE_GUIDE.md](./USAGE_GUIDE.md#️-react-integration)** for complete React integration examples
 
 ### React Hooks
 
@@ -254,8 +266,8 @@ The tool detects and can fix the following accessibility issues:
 | Issue Type | Severity | Auto-Fixable | Description |
 |------------|----------|--------------|-------------|
 | `missing-alt-text` | Error | ✅ Yes | Images missing alt attribute |
-| `missing-aria-label` | Warning | ❌ No | Interactive elements missing aria-label |
-| `missing-form-label` | Error | ❌ No | Form inputs missing associated labels |
+| `missing-aria-label` | Warning | ✅ Yes* | Interactive elements missing aria-label |
+| `missing-form-label` | Error | ✅ Yes* | Form inputs missing associated labels |
 | `missing-button-type` | Warning | ✅ Yes | Buttons missing type attribute |
 | `duplicate-id` | Error | ❌ No | Duplicate ID attributes found |
 | `missing-lang-attribute` | Error | ✅ Yes | HTML element missing lang attribute |
@@ -263,6 +275,10 @@ The tool detects and can fix the following accessibility issues:
 | `missing-landmark` | Info | ❌ No | Missing ARIA landmarks |
 | `invalid-role` | Error | ❌ No | Invalid ARIA role values |
 | `invalid-aria-attribute` | Error | ❌ No | Invalid ARIA attributes |
+
+**\* New in v1.0.1** - Configurable auto-fix (can be disabled in config)
+
+> **📖 See [USAGE_GUIDE.md](./USAGE_GUIDE.md#️-configuration)** for configuration options
 
 ## ⚙️ Configuration
 
@@ -278,6 +294,15 @@ Create a `.a11yrc.json` file in your project root:
     "**/dist/**",
     "**/build/**"
   ],
+  "performance": {
+    "cache": true,
+    "parallel": true,
+    "maxConcurrency": 10
+  },
+  "autoFix": {
+    "generateAriaLabels": true,
+    "wrapInputsWithLabels": true
+  },
   "rules": {
     "missing-alt-text": {
       "enabled": true,
@@ -290,6 +315,8 @@ Create a `.a11yrc.json` file in your project root:
   }
 }
 ```
+
+> **📖 See [USAGE_GUIDE.md](./USAGE_GUIDE.md#️-configuration)** for complete configuration options and examples
 
 ## 📊 Report Examples
 
@@ -384,6 +411,18 @@ MIT License - see LICENSE file for details
 ## 🙏 Acknowledgments
 
 This tool is inspired by the need for better accessibility tooling in the web development ecosystem. Special thanks to the ARIA working group and WCAG guidelines.
+
+## 📚 Documentation
+
+- **📖 [Complete Usage Guide](./USAGE_GUIDE.md)** - Comprehensive guide with examples and best practices
+  - [Installation](./USAGE_GUIDE.md#-installation)
+  - [CLI Usage](./USAGE_GUIDE.md#️-cli-usage)
+  - [Programmatic API](./USAGE_GUIDE.md#-programmatic-api)
+  - [React Integration](./USAGE_GUIDE.md#️-react-integration)
+  - [Configuration](./USAGE_GUIDE.md#️-configuration)
+  - [Performance Optimization](./USAGE_GUIDE.md#-performance-optimization)
+  - [Common Use Cases](./USAGE_GUIDE.md#-common-use-cases)
+  - [Troubleshooting](./USAGE_GUIDE.md#-troubleshooting)
 
 ## 📚 Resources
 
